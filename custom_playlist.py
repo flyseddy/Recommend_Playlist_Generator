@@ -2,7 +2,8 @@
 # Method for making the API endpoint request for artists ID
 # Method for making the API endpoint request for recommendations
 import requests
-from config import spotify_artist_token, spotify_rec_token
+from config import token, user_id
+import json
 
 class CreateCustomPlaylist:
 
@@ -20,7 +21,7 @@ class CreateCustomPlaylist:
 
         artist_response = requests.get(query,
                                         headers = {"Content-Type": "application/json",
-                                                    "Authorization": "Bearer {}".format(spotify_artist_token)})
+                                                    "Authorization": "Bearer {}".format(token)})
         json_artist_response = artist_response.json()
         artist = json_artist_response['artists']['items'][0]['uri'].replace('spotify:artist:', '') 
         return artist
@@ -32,7 +33,7 @@ class CreateCustomPlaylist:
         query = f"{endpoint_track_url}q={q}&type=track&market=US&limit={1}"
         track_response = requests.get(query,
                                             headers = {"Content-Type": "application/json",
-                                                        "Authorization": "Bearer {}".format(spotify_artist_token)})
+                                                        "Authorization": "Bearer {}".format(token)})
         json_track_response = track_response.json()
         track = json_track_response['tracks']['items'][0]['uri'].replace('spotify:track:', '')
         return track
@@ -45,26 +46,53 @@ class CreateCustomPlaylist:
 
         recommend_response = requests.get(query,
                                             headers = {"Content-Type": "application/json",
-                                                        "Authorization": "Bearer {}".format(spotify_rec_token)})
+                                                        "Authorization": "Bearer {}".format(token)})
         json_rec_response = recommend_response.json()
+        
+        playlist = []
         for item in json_rec_response['tracks']:
-            artist_name = item['album']['artists'][0]['name']
-            artist_song = item['name']
-            print(f"{artist_name} - {artist_song}")
+            track = item['uri']
+            playlist.append(track)
+        return playlist
 
     def create_playlist(self):
-        pass
+        """Creates a playlist"""
+        playlist_name = input("Title your playlist: ")
+        endpoint_playlist_url = f'https://api.spotify.com/v1/users/{user_id}/playlists'
 
-    def add_items_to_playlist(self):
-        pass
+        request_body = json.dumps({
+            "name": playlist_name,
+            "description": "Custom Playlist - Powered by Spotify Web API",
+            "public": False
+        })
+        response = requests.post(url = endpoint_playlist_url, data=request_body, headers={"Content-Type": "application/json",
+                                                                                            "Authorization":"Bearer {}".format(token)})
+        playlist_id = response.json()['id']
+        return playlist_id
+
+    def add_items_to_playlist(self, playlist_id, playlist_songs):
+        """Adds songs to playlist"""
+        endpoint_add_items_url = f'https://api.spotify.com/v1/playlists/{playlist_id}/tracks?'
+
+        request_body = json.dumps({
+            "uris": playlist_songs
+        })
+        response = requests.post(url = endpoint_add_items_url, data=request_body, headers = {"Content-Type": "application/json",
+                                                                                                "Authorization": "Bearer {}".format(token)})
+        if response.status_code == 201:
+            print("Playlist Creation Successful")
+        else:
+            print("Something went wrong")
 
 
 if __name__ == "__main__":
     playlist = CreateCustomPlaylist()
-    # playlist.make_api_artist_request()
     artist = playlist.make_api_artist_request()
     track = playlist.make_api_track_request()
-    playlist.make_recommend_api_request(artist, track)
+    playlist_songs = playlist.make_recommend_api_request(artist, track)
+    playlist_id = playlist.create_playlist()
+    playlist.add_items_to_playlist(playlist_id, playlist_songs)
+
     
      
 
