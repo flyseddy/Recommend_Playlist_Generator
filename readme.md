@@ -31,6 +31,3 @@ Note: To obtain yor user_id go to your Spotify profile, click share, and copy ou
 
 ## Contribution
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-[MIT](LICENSE)
