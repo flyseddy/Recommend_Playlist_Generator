@@ -27,7 +27,7 @@ user_id = "YOUR_USER_ID"
 Note: To obtain OAuth token, you must go to https://developer.spotify.com/console/post-playlists/
 and request the scopes playlist-modify-public and playlist-modify-private
 
-Note: To obtain your user_id go to your Spotify profile, click share, and copy your Spotify URI (only the last part of it - (ex. spotify:user{user_id}) - input the user_id part
+Note: To obtain your user_id, go to your Spotify profile, click share, and copy your Spotify URI (only the last part of it - (ex. spotify:user{user_id})
 
 ## Contribution
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
