@@ -42,7 +42,7 @@ class CreateCustomPlaylist:
     def make_recommend_api_request(self, artist, track):
         """Makes recommendation based on artists, genres, and tracks"""
         endpoint_rec_url = 'https://api.spotify.com/v1/recommendations?'
-        query = f'{endpoint_rec_url}limit={10}&seed_artists={artist}&seed_genres={self.genre}&seed_tracks={track}'
+        query = f'{endpoint_rec_url}limit={20}&seed_artists={artist}&seed_genres={self.genre}&seed_tracks={track}'
 
         recommend_response = requests.get(query,
                                             headers = {"Content-Type": "application/json",
