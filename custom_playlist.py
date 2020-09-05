@@ -8,85 +8,54 @@ import json
 class CreateCustomPlaylist:
 
     def __init__(self):
-        self.artist_count = int(input("How many artists do you wanna input? "))
-        self.genre_count = int(input("How many genres do you wanna input?"))
-        self.track_count = int(input("How many tracks do you wanna input? "))
+
+        self.artist_1 = input("Enter a artist: ")
+        self.artist_2 = input("Enter a second artist: ")
+        self.genre = input("Enter a genre: ")
+        self.track_1 = input("Enter a song: ")
+        self.track_2 = input("Enter a second song: ")
 
     def make_api_artist_request(self):
         """Makes the request to search for the artist"""
+        artists_list = [self.artist_1, self.artist_2]
+        final_artist_list = []
+        for name in artists_list:
+            endpoint_artist_url = 'https://api.spotify.com/v1/search?'
+            # Replaces the white space with (+) signs so it can pass through the api filter
+            q = name.replace(' ', '+')
+            query = f'{endpoint_artist_url}q={q}&type=artist&limit={1}'
 
-        """Idea - For multiple artists -  We are going to ask Enter artists in this method and enter genre will be asked in different method
-        and we will loop over how many artists that they wanna input - then we will give them a unique identifier ex. artist_1 - artist[i]
-        Then we will have all the artists, then we will append them to a list and return it and the end of the function."""
-        check_length = CreateCustomPlaylist.check_count(self.artist_count)
-        if check_length:
-            artists_list = []
-            # List to loop over the number of artists
-            for i in range(self.artist_count):
-                artist_name = input("Enter an artist: ")
-                artists_list.append(artist_name)
-            
-            final_artist_list = []
-            for name in artists_list:
-                endpoint_artist_url = 'https://api.spotify.com/v1/search?'
-                # Replaces the white space with (+) signs so it can pass through the api filter
-                q = name.replace(' ', '+')
-                query = f'{endpoint_artist_url}q={q}&type=artist&limit={1}'
+            artist_response = requests.get(query,
+                                            headers = {"Content-Type": "application/json",
+                                                        "Authorization": "Bearer {}".format(token)})
+            json_artist_response = artist_response.json()
+            artist = json_artist_response['artists']['items'][0]['uri'].replace('spotify:artist:', '') 
+            final_artist_list.append(artist)
 
-                artist_response = requests.get(query,
-                                                headers = {"Content-Type": "application/json",
-                                                            "Authorization": "Bearer {}".format(token)})
-                json_artist_response = artist_response.json()
-                artist = json_artist_response['artists']['items'][0]['uri'].replace('spotify:artist:', '') 
-                final_artist_list.append(artist)
-
-            final_artist_list = ','.join(final_artist_list)
-            print(final_artist_list)
-            return final_artist_list
-        
-        print("Only can input up to 5 values")
+        final_artist_list = ','.join(final_artist_list)
+        return final_artist_list
 
     def make_api_track_request(self):
         """Makes request for the track"""
-        check_length = CreateCustomPlaylist.check_count(self.track_count)
-        if check_length:
-            track_list = []
-            # List to loop over the number of tracks
-            for i in range(self.track_count):
-                track_name = input("Enter track name: ")
-                track_list.append(track_name)
-
-            final_track_list = []
-            for track in track_list:
-                endpoint_track_url = 'https://api.spotify.com/v1/search?'
-                q = track.replace(' ', '+')
-                query = f"{endpoint_track_url}q={q}&type=track&market=US&limit={1}"
-                track_response = requests.get(query,
-                                                    headers = {"Content-Type": "application/json",
-                                                                "Authorization": "Bearer {}".format(token)})
-                json_track_response = track_response.json()
-                track_final = json_track_response['tracks']['items'][0]['uri'].replace('spotify:track:', '')
-                final_track_list.append(track_final)
-            
-            final_track_list = ','.join(final_track_list)
-            print(final_track_list)
-            return final_track_list
+        track_list = [self.track_1, self.track_2]
+        final_track_list = []
+        for track in track_list:
+            endpoint_track_url = 'https://api.spotify.com/v1/search?'
+            q = track.replace(' ', '+')
+            query = f"{endpoint_track_url}q={q}&type=track&market=US&limit={1}"
+            track_response = requests.get(query,
+                                                headers = {"Content-Type": "application/json",
+                                                            "Authorization": "Bearer {}".format(token)})
+            json_track_response = track_response.json()
+            track_final = json_track_response['tracks']['items'][0]['uri'].replace('spotify:track:', '')
+            final_track_list.append(track_final)
         
-        print("Only can input up to 5 values")
+        final_track_list = ','.join(final_track_list)
+        return final_track_list
 
     def make_genre_request(self):
-        """Makes a list of genres to pass into the recommend method"""
-        check_length = CreateCustomPlaylist.check_count(self.genre_count)
-        if check_length:
-            genre_list = []
-            for i in range(self.genre_count):
-                genre_name = input("Enter a genre: ")
-                genre_list.append(genre_name)
-            
-            genre_list = ','.join(genre_list)
-            return genre_list
-
-        print("Only can input up to 5 values")
+        """Returns a single genre"""
+        return self.genre
 
     def make_recommend_api_request(self, artist, track, genre):
         """Makes recommendation based on artists, genres, and tracks"""
@@ -133,15 +102,6 @@ class CreateCustomPlaylist:
             print("Playlist Creation Successful")
         else:
             print("Something went wrong")
-
-    def check_count(count):
-        if count > 5:
-            return False
-        elif count < 0:
-            return False
-        else:
-            return True
-
 
 if __name__ == "__main__":
     playlist = CreateCustomPlaylist()
