@@ -13,10 +13,12 @@ python3 custom_playlist.py
 ```
 ## Examples
 ```python
-Enter an artist: arctic monkeys
-Enter a genre: indie
-Enter a track: star treatment
-Title your playlist: My Custom Playlist
+Enter an artist: ll cool j
+Enter a second artist: lauryn hill
+Enter a genre: hip-hop
+Enter a song: around the way girl
+Enter a second song: doo wop
+Title your playlist: Hip-Hop
 Playlist Creation Successful
 ```
 ## Config.py
