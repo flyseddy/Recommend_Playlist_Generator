@@ -8,7 +8,6 @@ import json
 class CreateCustomPlaylist:
 
     def __init__(self):
-
         self.artist_1 = input("Enter a artist: ")
         self.artist_2 = input("Enter a second artist: ")
         self.genre = input("Enter a genre: ")
